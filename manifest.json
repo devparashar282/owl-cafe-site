@@ -1,0 +1,21 @@
+{
+  "name": "Owl Cafe",
+  "short_name": "Owl Cafe",
+  "description": "Premium Luxury Cafe in Lucknow",
+  "start_url": "/Cafe/index.php",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#d4af37",
+  "icons": [
+    {
+      "src": "/Cafe/assets/images/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/Cafe/assets/images/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

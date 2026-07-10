@@ -1,0 +1,107 @@
+/* Responsive Styles */
+
+/* Desktop (1920px & below - handled by container max-widths in Bootstrap) */
+
+/* Laptop Large (1440px & below) */
+@media (max-width: 1440px) {
+    .hero-content h1 {
+        font-size: 4rem;
+    }
+}
+
+/* Laptop (1366px & below) */
+@media (max-width: 1366px) {
+    .hero-content h1 {
+        font-size: 3.5rem;
+    }
+}
+
+/* Tablet Landscape (1024px & below) */
+@media (max-width: 1024px) {
+    .section-padding {
+        padding: 80px 0;
+    }
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+}
+
+/* Tablet Portrait & iPad (768px & below) */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    .hero-content p {
+        font-size: 1rem;
+    }
+    .navbar-collapse {
+        background: rgba(10, 10, 10, 0.98);
+        padding: 1rem;
+        border-radius: 10px;
+        margin-top: 10px;
+        border: var(--glass-border);
+    }
+    .nav-actions {
+        margin-top: 1rem;
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    .menu-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    .menu-img {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    .menu-title {
+        flex-direction: column;
+        border-bottom: none;
+    }
+    .menu-price {
+        margin-top: 0.5rem;
+    }
+    
+    .cursor, .cursor2 {
+        display: none !important; /* Disable custom cursor on mobile */
+    }
+}
+
+/* Mobile Large (480px & below) */
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    .section-padding {
+        padding: 60px 0;
+    }
+    .section-title h2 {
+        font-size: 2rem;
+    }
+    .floating-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+}
+
+/* Mobile Medium (390px, 375px & below) */
+@media (max-width: 390px) {
+    .btn-premium {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    .hero-content h1 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Mobile Small (320px & below) */
+@media (max-width: 320px) {
+    .hero-content h1 {
+        font-size: 1.5rem;
+    }
+    .section-title h2 {
+        font-size: 1.8rem;
+    }
+}
