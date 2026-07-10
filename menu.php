@@ -75,10 +75,10 @@ $menu_items = $stmt->fetchAll();
                     ?>
                     <div class="col-lg-4 col-md-6 menu-item-card" data-title="<?= strtolower($item['name']) ?>">
                         <div class="glass-card h-100 position-relative overflow-hidden card-hover-lift d-flex flex-column">
-                            <div class="position-absolute top-0 end-0 m-3 z-2">
-                                <span class="badge bg-golden text-black fs-6 py-2 px-3 rounded-pill"><i class="fas fa-star me-1"></i> <?= $item['rating'] ?? '4.5' ?></span>
-                            </div>
-                            <div class="overflow-hidden rounded-4 mb-4" style="height: 250px;">
+                            <div class="overflow-hidden rounded-4 mb-4 position-relative" style="height: 250px;">
+                                <div class="position-absolute top-0 end-0 m-3 z-3">
+                                    <span class="badge bg-golden text-black fw-bold fs-6 py-1 px-3 rounded-pill shadow-sm" style="backdrop-filter: blur(5px); background: rgba(255, 215, 0, 0.9);"><i class="fas fa-star text-dark me-1"></i> <?= $item['rating'] ?? '4.5' ?></span>
+                                </div>
                                 <img src="<?= $img_src ?>" alt="<?= $item['name'] ?>" class="img-fluid w-100 h-100 object-fit-cover hover-zoom" style="transition: transform 0.5s; cursor: pointer;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-1">
