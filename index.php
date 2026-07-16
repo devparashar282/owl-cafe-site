@@ -26,7 +26,7 @@ require_once 'includes/header.php';
         <div class="row justify-content-center">
             <div class="col-lg-10" data-aos="zoom-in">
                 <!-- Large Owl Logo -->
-                <img src="<?= $base_url ?>assets/images/logo.jpg" alt="Owl Cafe Logo" class="rounded-circle mb-4" style="width: 180px; height: 180px; object-fit: contain; box-shadow: 0 0 40px rgba(212, 175, 55, 0.6) !important; border: 3px solid var(--golden);">
+                <img src="<?= $base_url ?>assets/images/logo.jpg" alt="Owl Cafe Logo" class="rounded-circle mb-4" style="width: 110px; height: 110px; object-fit: contain; box-shadow: 0 0 25px rgba(212, 175, 55, 0.5) !important; border: 2px solid var(--golden);">
                 
                 <h1 class="text-white glow-text display-1" style="font-family: 'Playfair Display', serif;">OWL CAFE</h1>
                 <h2 class="text-gradient mb-4 fs-2" style="font-family: 'Outfit', sans-serif;">Wise Eats. Great Treats.</h2>
