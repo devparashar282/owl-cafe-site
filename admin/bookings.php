@@ -8,6 +8,7 @@ require_once 'includes/sidebar.php';
 require_once '../includes/PHPMailer/src/Exception.php';
 require_once '../includes/PHPMailer/src/PHPMailer.php';
 require_once '../includes/PHPMailer/src/SMTP.php';
+require_once '../includes/mail.php';
 
 $message = '';
 
@@ -33,8 +34,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
             $to = $booking['email'];
             $subject = "Table Booking Confirmed - Owl Cafe";
             
-            // Note: Since this might run on localhost, we use absolute paths assuming typical local setup
-            $logo_url = "http://localhost/Cafe/assets/images/logo.jpg"; 
+            $logo_url = $site_origin . $base_url . 'assets/images/logo.jpg';
             
             $html_message = "
             <html>
@@ -57,6 +57,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
                     <p style='font-size: 18px; margin-bottom: 30px;'>Hello <span class='golden'>{$booking['name']}</span>,<br>Your table reservation at Owl Cafe has been successfully confirmed.</p>
                     
                     <div class='details'>
+                        <p><span class='golden'>Event Type:</span> {$booking['booking_type']}</p>
                         <p><span class='golden'>Date:</span> " . date('d M Y', strtotime($booking['booking_date'])) . "</p>
                         <p><span class='golden'>Time:</span> " . date('h:i A', strtotime($booking['booking_time'])) . "</p>
                         <p><span class='golden'>Guests:</span> {$booking['guests']} Person(s)</p>
@@ -75,17 +76,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
             ";
             $mail = new PHPMailer(true);
             try {
-                // Server settings
-                $mail->isSMTP();
-                $mail->Host       = 'smtp.gmail.com';
-                $mail->SMTPAuth   = true;
-                $mail->Username   = 'owlcafeposs@gmail.com';
-                $mail->Password   = 'lisdymjhybxnutrd'; 
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port       = 587;
+                if (!configureMailerFromEnv($mail)) {
+                    throw new Exception('Mail is not configured.');
+                }
 
                 // Recipients
-                $mail->setFrom('owlcafeposs@gmail.com', 'Owl Cafe');
                 $mail->addAddress($to, $booking['name']);
 
                 // Content
@@ -96,7 +91,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
                 $mail->send();
                 $message .= "<div class='alert alert-success mt-2'>Confirmation email sent to {$to}.</div>";
             } catch (Exception $e) {
-                $message .= "<div class='alert alert-warning mt-2'>Status updated, but failed to send email. Error: {$mail->ErrorInfo}</div>";
+                $errorMessage = htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+                $message .= "<div class='alert alert-warning mt-2'>Status updated, but email is not configured or failed to send. Error: {$errorMessage}</div>";
             }
         }
         
@@ -130,7 +126,7 @@ try {
                         <th>Name</th>
                         <th>Contact</th>
                         <th>Date & Time</th>
-                        <th>Guests</th>
+                        <th>Details</th>
                         <th>Request</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -151,7 +147,10 @@ try {
                             <div class="text-golden fw-bold"><?= date('d M Y', strtotime($book['booking_date'])) ?></div>
                             <small><?= date('h:i A', strtotime($book['booking_time'])) ?></small>
                         </td>
-                        <td><?= $book['guests'] ?> Person(s)</td>
+                        <td>
+                            <span class="badge bg-secondary mb-1"><?= htmlspecialchars($book['booking_type'] ?? 'Regular Dining') ?></span><br>
+                            <?= $book['guests'] ?> Person(s)
+                        </td>
                         <td><small><?= htmlspecialchars($book['special_request'] ?: 'None') ?></small></td>
                         <td>
                             <?php 

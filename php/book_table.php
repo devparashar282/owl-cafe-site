@@ -1,9 +1,9 @@
 <?php
 require_once '../includes/db.php';
-// Include PHPMailer
 require '../php/PHPMailer/src/Exception.php';
 require '../php/PHPMailer/src/PHPMailer.php';
 require '../php/PHPMailer/src/SMTP.php';
+require_once '../includes/mail.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -15,34 +15,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     $guests = (int)$_POST['guests'];
+    $booking_type = filter_var($_POST['booking_type'], FILTER_SANITIZE_STRING) ?: 'Regular Dining';
     $date = $_POST['booking_date'];
     $time = $_POST['booking_time'];
     $special = filter_var($_POST['special_request'], FILTER_SANITIZE_STRING);
 
     try {
         // Insert into DB
-        $stmt = $pdo->prepare("INSERT INTO bookings (name, email, phone, guests, booking_date, booking_time, special_request, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')");
-        $stmt->execute([$name, $email, $phone, $guests, $date, $time, $special]);
+        $stmt = $pdo->prepare("INSERT INTO bookings (name, email, phone, guests, booking_type, booking_date, booking_time, special_request, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending')");
+        $stmt->execute([$name, $email, $phone, $guests, $booking_type, $date, $time, $special]);
 
         // Send Email
         $mail = new PHPMailer(true);
         try {
-            // Since we are simulating, we won't actually send via SMTP unless configured, 
-            // but we setup the structure as requested.
-            // $mail->isSMTP();
-            // $mail->Host       = 'smtp.example.com';
-            // $mail->SMTPAuth   = true;
-            // $mail->Username   = 'your_email@example.com';
-            // $mail->Password   = 'your_password';
-            // $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            // $mail->Port       = 465;
-
-            // Setting up a dummy configuration to bypass actual sending error in dev
-            $mail->isMail(); 
-
-            $mail->setFrom('info@owlcafe.com', 'OWL CAFE');
+            $mailConfigured = configureMailerFromEnv($mail);
             $mail->addAddress($email, $name);
-            $mail->addBCC('admin@owlcafe.com', 'Admin'); // Send copy to admin
+
+            $adminBcc = getenv('MAIL_ADMIN_BCC') ?: getenv('MAIL_USERNAME');
+            if ($adminBcc) {
+                $mail->addBCC($adminBcc, 'Admin');
+            }
 
             $mail->isHTML(true);
             $mail->Subject = 'Table Booking Confirmation - OWL CAFE';
@@ -53,6 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p>Thank you for booking your table at <strong>OWL CAFE</strong>.</p>
                 <p>Your reservation has been received and is currently Pending confirmation. Our team will contact you shortly.</p>
                 <div style='background: #f8f5f2; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                    <p><strong>Event Type:</strong> $booking_type</p>
                     <p><strong>Date:</strong> $date</p>
                     <p><strong>Time:</strong> $time</p>
                     <p><strong>Guests:</strong> $guests</p>
@@ -63,13 +56,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             ";
 
-            // If SMTP is not configured, this might fail or silently pass depending on server settings.
-            // $mail->send(); 
-            // We comment $mail->send() out to prevent 500 error in dev environments without mailserver
-            
-            echo json_encode(['status' => 'success', 'message' => 'Booking Successful! Your confirmation email has been sent.']);
+            if ($mailConfigured) {
+                $mail->send();
+                echo json_encode(['status' => 'success', 'message' => 'Booking Successful! Your confirmation email has been sent.']);
+            } else {
+                echo json_encode(['status' => 'success', 'message' => 'Booking Successful! Email is not configured on this deployment, so only the reservation was saved.']);
+            }
         } catch (Exception $e) {
-            echo json_encode(['status' => 'success', 'message' => 'Booking saved, but email could not be sent locally.']);
+            echo json_encode(['status' => 'success', 'message' => 'Booking saved, but email could not be sent.']);
         }
 
     } catch (PDOException $e) {

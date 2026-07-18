@@ -41,6 +41,18 @@ require_once 'includes/header.php';
                                 </select>
                             </div>
                             <div class="col-md-6">
+                                <label class="form-label text-golden">Event Type *</label>
+                                <select name="booking_type" class="form-select bg-transparent theme-border theme-text py-3" style="background-color: var(--bg-primary);" required>
+                                    <option value="Regular Dining">Regular Dining</option>
+                                    <option value="Birthday Party">Birthday Party</option>
+                                    <option value="Kitty Party">Kitty Party</option>
+                                    <option value="Private Party">Private Party</option>
+                                    <option value="Meeting">Business Meeting</option>
+                                    <option value="Anniversary">Anniversary</option>
+                                    <option value="Movie Night">Movie Night Booking</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label text-golden">Date *</label>
                                 <input type="date" name="booking_date" class="form-control bg-transparent theme-border theme-text py-3" required>
                             </div>
