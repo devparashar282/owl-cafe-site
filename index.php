@@ -95,7 +95,7 @@ require_once 'includes/header.php';
                 <?php foreach ($active_offers as $offer): ?>
                 <div class="swiper-slide">
                     <div class="glass-card overflow-hidden h-100 card-hover-lift rounded-4" style="border: 2px solid rgba(212, 175, 55, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                        <img src="<?= media_resolve_src($offer['image']) ?>" class="img-fluid w-100 object-fit-cover" alt="<?= htmlspecialchars($offer['title']) ?>" style="max-height: 500px; width: 100%;">
+                        <img src="<?= media_resolve_src($offer['image'], $base_url) ?>" class="img-fluid w-100 object-fit-cover" alt="<?= htmlspecialchars($offer['title']) ?>" style="max-height: 500px; width: 100%;">
                     </div>
                 </div>
                 <?php endforeach; ?>
