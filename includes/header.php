@@ -100,6 +100,9 @@ if (isset($_SESSION['cart'])) {
                         <a class="nav-link" href="<?= $base_url ?>menu.php">Menu</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="<?= $base_url ?>movie_night.php">Movie Night</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="<?= $base_url ?>contact.php">Contact</a>
                     </li>
                 </ul>

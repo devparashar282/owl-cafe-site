@@ -45,6 +45,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="movie_night.php" class="nav-link <?= ($current_page == 'movie_night.php') ? 'active' : '' ?>">
+                        <i class="fas fa-film"></i> Movie Night
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="settings.php" class="nav-link <?= ($current_page == 'settings.php') ? 'active' : '' ?>">
                         <i class="fas fa-cog"></i> Settings
                     </a>
