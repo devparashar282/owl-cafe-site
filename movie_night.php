@@ -30,7 +30,7 @@ require_once 'includes/header.php';
                     <div class="glass-card p-4 p-md-5" data-aos="fade-up">
                         <div class="row gy-5 align-items-center">
                             <div class="col-md-5 text-center">
-                                <img src="<?= media_get_asset_url($active_movie['image']) ?>" alt="<?= htmlspecialchars($active_movie['title']) ?>" class="img-fluid rounded" style="box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3); border: 2px solid var(--golden); max-height: 500px; object-fit: cover;">
+                                <img src="<?= media_resolve_src($active_movie['image'], './') ?>" alt="<?= htmlspecialchars($active_movie['title']) ?>" class="img-fluid rounded" style="box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3); border: 2px solid var(--golden); max-height: 500px; object-fit: cover;">
                             </div>
                             <div class="col-md-7">
                                 <div class="mb-4">

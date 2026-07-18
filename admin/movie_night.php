@@ -96,7 +96,7 @@ try {
                         <?php foreach($movies as $movie): ?>
                         <tr>
                             <td>
-                                <img src="<?= media_get_asset_url($movie['image']) ?>" alt="<?= htmlspecialchars($movie['title']) ?>" class="rounded" style="width: 80px; height: 120px; object-fit: cover;">
+                                <img src="<?= media_resolve_src($movie['image'], '../') ?>" alt="<?= htmlspecialchars($movie['title']) ?>" class="rounded" style="width: 80px; height: 120px; object-fit: cover;">
                             </td>
                             <td class="fw-bold"><?= htmlspecialchars($movie['title']) ?></td>
                             <td>
