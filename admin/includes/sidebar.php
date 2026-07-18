@@ -40,13 +40,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="offers.php" class="nav-link <?= $current_page == 'offers.php' ? 'active' : '' ?>">
+                        <i class="fas fa-tags"></i> Daily Offers
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="messages.php" class="nav-link <?= ($current_page == 'messages.php') ? 'active' : '' ?>">
                         <i class="fas fa-envelope"></i> Messages
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="movie_night.php" class="nav-link <?= ($current_page == 'movie_night.php') ? 'active' : '' ?>">
-                        <i class="fas fa-film"></i> Movie Night
+                    <a href="movie_night.php" class="nav-link <?= $current_page == 'movie_night.php' ? 'active' : '' ?>">
+                        <i class="fas fa-film"></i> Movie Nights
                     </a>
                 </li>
                 <li class="nav-item">

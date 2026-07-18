@@ -10,6 +10,14 @@ try {
     $active_movie = null;
 }
 
+// Fetch active daily offers
+try {
+    $stmt = $pdo->query("SELECT * FROM offers WHERE status = 'Active' ORDER BY created_at DESC");
+    $active_offers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $active_offers = [];
+}
+
 require_once 'includes/header.php'; 
 ?>
 
@@ -73,41 +81,65 @@ require_once 'includes/header.php';
 </section>
 <?php endif; ?>
 
-<!-- Special Offer Section -->
-<section class="section-padding theme-bg-sec">
+<!-- Daily Special Offers Slider -->
+<?php if (!empty($active_offers)): ?>
+<section class="section-padding theme-bg-sec pt-4 pb-5">
     <div class="container">
-        <div class="section-title" data-aos="fade-up">
-            <span class="subtitle">Exclusive Deals</span>
-            <h2>Special Offers</h2>
+        <div class="section-title mb-4" data-aos="fade-up">
+            <span class="subtitle text-danger fw-bold"><i class="fas fa-fire me-1"></i> Today's Deals</span>
+            <h2>Exclusive Combos</h2>
         </div>
-        <div class="row gy-4">
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="glass-card p-4 text-center h-100 card-hover-lift" style="border: 1px solid rgba(212, 175, 55, 0.3);">
-                    <div class="btn-icon bg-golden text-black mx-auto mb-3" style="width: 70px; height: 70px; font-size: 1.8rem;"><i class="fas fa-coffee"></i></div>
-                    <h3 class="h4 text-gradient mb-3">Buy 2 Coffee Get 1 Free</h3>
-                    <p class="theme-text-muted mb-4">Perfect for catching up with friends. Bring the gang and the third coffee is on us.</p>
-                    <a href="<?= $base_url ?>menu.php" class="btn btn-sm btn-outline-light rounded-pill px-4 py-2">Claim Offer</a>
+        
+        <div class="swiper offers-slider" data-aos="fade-up" data-aos-delay="100">
+            <div class="swiper-wrapper">
+                <?php foreach ($active_offers as $offer): ?>
+                <div class="swiper-slide">
+                    <div class="glass-card overflow-hidden h-100 card-hover-lift rounded-4" style="border: 2px solid rgba(212, 175, 55, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <img src="<?= media_resolve_src($offer['image']) ?>" class="img-fluid w-100 object-fit-cover" alt="<?= htmlspecialchars($offer['title']) ?>" style="max-height: 500px; width: 100%;">
+                    </div>
                 </div>
+                <?php endforeach; ?>
             </div>
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="glass-card p-4 text-center h-100 card-hover-lift" style="border: 1px solid rgba(212, 175, 55, 0.3);">
-                    <div class="btn-icon bg-golden text-black mx-auto mb-3" style="width: 70px; height: 70px; font-size: 1.8rem;"><i class="fas fa-hamburger"></i></div>
-                    <h3 class="h4 text-gradient mb-3">20% OFF on Burgers</h3>
-                    <p class="theme-text-muted mb-4">Savor our premium gourmet burgers with a flat 20% discount all day long.</p>
-                    <a href="<?= $base_url ?>menu.php" class="btn btn-sm btn-outline-light rounded-pill px-4 py-2">Claim Offer</a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="glass-card p-4 text-center h-100 card-hover-lift" style="border: 1px solid rgba(212, 175, 55, 0.3);">
-                    <div class="btn-icon bg-golden text-black mx-auto mb-3" style="width: 70px; height: 70px; font-size: 1.8rem;"><i class="fas fa-pizza-slice"></i></div>
-                    <h3 class="h4 text-gradient mb-3">Weekend Family Combo</h3>
-                    <p class="theme-text-muted mb-4">A giant feast consisting of our finest pizzas, pasta, and beverages for the whole family.</p>
-                    <a href="<?= $base_url ?>menu.php" class="btn btn-sm btn-outline-light rounded-pill px-4 py-2">Claim Offer</a>
-                </div>
-            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination position-static mt-4"></div>
+            <!-- Add Navigation -->
+            <div class="swiper-button-next text-golden"></div>
+            <div class="swiper-button-prev text-golden"></div>
         </div>
     </div>
 </section>
+
+<!-- Initialize Swiper for Offers -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    new Swiper('.offers-slider', {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+            delay: 3500,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.offers-slider .swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.offers-slider .swiper-button-next',
+            prevEl: '.offers-slider .swiper-button-prev',
+        },
+        breakpoints: {
+            640: {
+                slidesPerView: 2,
+            },
+            1024: {
+                slidesPerView: 3,
+            }
+        }
+    });
+});
+</script>
+<?php endif; ?>
 
 <!-- About Section -->
 <section class="section-padding" id="about">
