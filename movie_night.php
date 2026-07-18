@@ -38,14 +38,14 @@ require_once 'includes/header.php';
                                     <h2 class="text-golden display-5 fw-bold mb-3"><?= htmlspecialchars($active_movie['title']) ?></h2>
                                     
                                     <div class="d-flex flex-wrap gap-4 mb-4 mt-4">
-                                        <div class="d-flex align-items-center text-light">
+                                        <div class="d-flex align-items-center theme-text">
                                             <i class="far fa-calendar-alt text-golden fs-4 me-3"></i>
                                             <div>
                                                 <h6 class="mb-0 theme-text-muted">Date</h6>
                                                 <span class="fs-5"><?= date('l, d F Y', strtotime($active_movie['movie_date'])) ?></span>
                                             </div>
                                         </div>
-                                        <div class="d-flex align-items-center text-light">
+                                        <div class="d-flex align-items-center theme-text">
                                             <i class="far fa-clock text-golden fs-4 me-3"></i>
                                             <div>
                                                 <h6 class="mb-0 theme-text-muted">Showtime</h6>
@@ -57,7 +57,7 @@ require_once 'includes/header.php';
                                     <hr class="theme-border my-4">
                                     
                                     <h5 class="theme-text-muted mb-3">About the Night</h5>
-                                    <p class="text-light lh-lg" style="font-size: 1.1rem;"><?= nl2br(htmlspecialchars($active_movie['description'])) ?></p>
+                                    <p class="theme-text lh-lg" style="font-size: 1.1rem;"><?= nl2br(htmlspecialchars($active_movie['description'])) ?></p>
                                 </div>
                                 
                                 <div class="mt-5">
