@@ -59,7 +59,26 @@ $total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
                     </div>
                     
                     <div class="glass-card p-4">
-                        <h4 class="mb-4 text-golden">Delivery Details</h4>
+                        <h4 class="mb-4 text-golden">Order Details</h4>
+                        
+                        <div class="mb-4">
+                            <label class="form-label theme-text-muted">Order Type</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check custom-radio flex-grow-1 border rounded p-2 theme-border text-center">
+                                    <input class="form-check-input float-none ms-0 mb-2" type="radio" name="order_type" id="typeDelivery" value="Delivery" checked>
+                                    <label class="form-check-label d-block theme-text" for="typeDelivery">
+                                        <i class="fas fa-motorcycle fs-4 mb-1 d-block text-golden"></i> Delivery
+                                    </label>
+                                </div>
+                                <div class="form-check custom-radio flex-grow-1 border rounded p-2 theme-border text-center">
+                                    <input class="form-check-input float-none ms-0 mb-2" type="radio" name="order_type" id="typeDineIn" value="Dine In">
+                                    <label class="form-check-label d-block theme-text" for="typeDineIn">
+                                        <i class="fas fa-utensils fs-4 mb-1 d-block text-golden"></i> Dine In
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row gy-3">
                             <div class="col-md-6">
                                 <label class="form-label theme-text-muted">Full Name</label>
@@ -69,9 +88,13 @@ $total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
                                 <label class="form-label theme-text-muted">Phone Number</label>
                                 <input type="tel" name="phone" class="form-control bg-transparent theme-border theme-text" required>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12" id="deliveryAddressGroup">
                                 <label class="form-label theme-text-muted">Delivery Address</label>
-                                <textarea name="address" class="form-control bg-transparent theme-border theme-text" rows="3" required></textarea>
+                                <textarea name="address" id="deliveryAddress" class="form-control bg-transparent theme-border theme-text" rows="3" required></textarea>
+                            </div>
+                            <div class="col-12" id="tableNumberGroup" style="display: none;">
+                                <label class="form-label theme-text-muted">Table Number (Optional)</label>
+                                <input type="text" name="table_number" class="form-control bg-transparent theme-border theme-text" placeholder="e.g. Table 4">
                             </div>
                         </div>
                     </div>
@@ -92,18 +115,18 @@ $total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
                         </div>
                         <div class="d-flex justify-content-between mb-3 pb-3 border-bottom theme-border">
                             <span class="theme-text-muted">Delivery Charge</span>
-                            <span>₹<?= number_format($delivery, 2) ?></span>
+                            <span id="deliveryChargeDisplay">₹<?= number_format($delivery, 2) ?></span>
                         </div>
                         <div class="d-flex justify-content-between mb-4">
                             <h5 class="mb-0">Total Amount</h5>
-                            <h5 class="text-gradient mb-0">₹<?= number_format($total, 2) ?></h5>
+                            <h5 class="text-gradient mb-0" id="totalAmountDisplay">₹<?= number_format($total, 2) ?></h5>
                         </div>
                         
                         <!-- Hidden inputs for backend processing -->
                         <input type="hidden" name="subtotal" value="<?= $subtotal ?>">
                         <input type="hidden" name="gst" value="<?= $gst ?>">
-                        <input type="hidden" name="delivery" value="<?= $delivery ?>">
-                        <input type="hidden" name="total" value="<?= $total ?>">
+                        <input type="hidden" name="delivery" id="hiddenDeliveryInput" value="<?= $delivery ?>">
+                        <input type="hidden" name="total" id="hiddenTotalInput" value="<?= $total ?>">
                         
                         <h5 class="mb-3 mt-4 text-golden">Payment Method</h5>
                         <div class="mb-2">
@@ -174,6 +197,53 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+
+    // Dine In vs Delivery Toggle Logic
+    const typeDelivery = document.getElementById('typeDelivery');
+    const typeDineIn = document.getElementById('typeDineIn');
+    const deliveryAddressGroup = document.getElementById('deliveryAddressGroup');
+    const tableNumberGroup = document.getElementById('tableNumberGroup');
+    const deliveryAddressInput = document.getElementById('deliveryAddress');
+    const deliveryChargeDisplay = document.getElementById('deliveryChargeDisplay');
+    const totalAmountDisplay = document.getElementById('totalAmountDisplay');
+    const hiddenDeliveryInput = document.getElementById('hiddenDeliveryInput');
+    const hiddenTotalInput = document.getElementById('hiddenTotalInput');
+    
+    // PHP variables passed to JS
+    const subtotal = <?= $subtotal ?>;
+    const gst = <?= $gst ?>;
+    const baseDelivery = <?= $delivery ?>;
+    
+    function updateOrderType() {
+        if(typeDineIn.checked) {
+            deliveryAddressGroup.style.display = 'none';
+            deliveryAddressInput.removeAttribute('required');
+            tableNumberGroup.style.display = 'block';
+            
+            // Update Totals (Remove delivery fee)
+            deliveryChargeDisplay.innerText = '₹0.00';
+            hiddenDeliveryInput.value = 0;
+            const newTotal = subtotal + gst;
+            totalAmountDisplay.innerText = '₹' + newTotal.toFixed(2);
+            hiddenTotalInput.value = newTotal;
+        } else {
+            deliveryAddressGroup.style.display = 'block';
+            deliveryAddressInput.setAttribute('required', 'required');
+            tableNumberGroup.style.display = 'none';
+            
+            // Update Totals (Add delivery fee back)
+            deliveryChargeDisplay.innerText = '₹' + baseDelivery.toFixed(2);
+            hiddenDeliveryInput.value = baseDelivery;
+            const newTotal = subtotal + gst + baseDelivery;
+            totalAmountDisplay.innerText = '₹' + newTotal.toFixed(2);
+            hiddenTotalInput.value = newTotal;
+        }
+    }
+    
+    if(typeDelivery && typeDineIn) {
+        typeDelivery.addEventListener('change', updateOrderType);
+        typeDineIn.addEventListener('change', updateOrderType);
+    }
 });
 </script>
 

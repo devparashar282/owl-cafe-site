@@ -53,7 +53,16 @@ try {
                     <tr><td colspan="7" class="text-center py-4 theme-text-muted">No orders found.</td></tr>
                     <?php else: foreach($orders as $order): ?>
                     <tr>
-                        <td class="fw-bold">#ORD-<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?></td>
+                        <td class="fw-bold">
+                            #ORD-<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?>
+                            <div class="mt-1">
+                                <?php if($order['order_type'] == 'Dine In'): ?>
+                                    <span class="badge bg-info text-dark"><i class="fas fa-utensils me-1"></i> Dine In</span>
+                                <?php else: ?>
+                                    <span class="badge bg-primary"><i class="fas fa-motorcycle me-1"></i> Delivery</span>
+                                <?php endif; ?>
+                            </div>
+                        </td>
                         <td>
                             <div><?= htmlspecialchars($order['name']) ?></div>
                             <small class="theme-text-muted"><?= htmlspecialchars($order['phone']) ?></small>

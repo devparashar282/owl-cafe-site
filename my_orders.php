@@ -163,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <h6 class="theme-text-muted mb-1">Invoice Details:</h6>
                                 <p class="text-light mb-0"><strong>Receipt ID:</strong> ${order.formatted_id}</p>
                                 <p class="text-light mb-0"><strong>Date:</strong> ${order.formatted_date}</p>
+                                <p class="text-light mb-0"><strong>Order Type:</strong> ${order.order_type}</p>
                                 <p class="text-light mb-0"><strong>Payment Method:</strong> ${order.payment_method}</p>
                                 <p class="text-light mb-0"><strong>Status:</strong> <span class="text-golden">${order.status}</span></p>
                             </div>

@@ -6,7 +6,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
     $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
     $phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
-    $address = filter_var($_POST['address'], FILTER_SANITIZE_STRING);
+    $order_type = $_POST['order_type'] ?? 'Delivery';
+    $table_number = filter_var($_POST['table_number'] ?? '', FILTER_SANITIZE_STRING);
+    
+    if ($order_type === 'Dine In') {
+        $address = 'Dine In' . ($table_number ? ' - ' . $table_number : '');
+    } else {
+        $address = filter_var($_POST['address'], FILTER_SANITIZE_STRING);
+    }
+    
     $payment_method = $_POST['payment_method'];
     
     $subtotal = $_POST['subtotal'];
@@ -18,8 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'])) {
         $pdo->beginTransaction();
         
         // Insert Order
-        $stmt = $pdo->prepare("INSERT INTO orders (user_id, name, phone, address, subtotal, gst, delivery_charge, total, payment_method, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')");
-        $stmt->execute([$user_id, $name, $phone, $address, $subtotal, $gst, $delivery, $total, $payment_method]);
+        $stmt = $pdo->prepare("INSERT INTO orders (user_id, order_type, name, phone, address, subtotal, gst, delivery_charge, total, payment_method, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')");
+        $stmt->execute([$user_id, $order_type, $name, $phone, $address, $subtotal, $gst, $delivery, $total, $payment_method]);
         $order_id = $pdo->lastInsertId();
         
         // Insert real cart items
