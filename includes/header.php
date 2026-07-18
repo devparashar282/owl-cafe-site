@@ -109,9 +109,9 @@ if (isset($_SESSION['cart'])) {
                 
                 <!-- Right: Actions -->
                 <div class="d-flex align-items-center gap-3 nav-actions mt-3 mt-lg-0">
-                    <a href="<?= $base_url ?>menu.php" class="btn btn-outline-light d-none d-xl-block" style="border-radius: 30px; padding: 8px 20px;">Order Online</a>
+                    <a href="<?= $base_url ?>menu.php" class="btn btn-outline-dark d-none d-xl-block" style="border-radius: 30px; padding: 8px 20px;">Order Online</a>
                     <a href="<?= $base_url ?>booking.php" class="btn-premium d-none d-sm-block" style="padding: 10px 20px;">Book Table</a>
-                    <button class="btn btn-outline-light installAppBtn" style="border-radius: 30px; padding: 8px 20px;"><i class="fas fa-mobile-alt me-1"></i> Get App</button>
+                    <button class="btn btn-outline-dark installAppBtn" style="border-radius: 30px; padding: 8px 20px;"><i class="fas fa-mobile-alt me-1"></i> Get App</button>
                     
                     <a href="<?= $base_url ?>order.php" class="btn-icon position-relative text-decoration-none me-2" title="Cart">
                         <i class="fas fa-shopping-cart"></i>
