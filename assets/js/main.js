@@ -45,29 +45,31 @@ AOS.init({
 });
 
 // Initialize Swiper for Reviews (if element exists)
-if (document.querySelector('.reviews-slider')) {
-    new Swiper('.reviews-slider', {
-        slidesPerView: 1,
-        spaceBetween: 30,
-        loop: true,
-        autoplay: {
-            delay: 3000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        breakpoints: {
-            768: {
-                slidesPerView: 2,
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('.reviews-slider')) {
+        new Swiper('.reviews-slider', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
             },
-            1024: {
-                slidesPerView: 3,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 2,
+                },
+                1024: {
+                    slidesPerView: 3,
+                }
             }
-        }
-    });
-}
+        });
+    }
+});
 
 // Animated Counters Observer
 document.addEventListener('DOMContentLoaded', () => {

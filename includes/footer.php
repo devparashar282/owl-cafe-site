@@ -74,7 +74,7 @@
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/Cafe/sw.js')
+                navigator.serviceWorker.register('<?= $base_url ?>sw.js')
                     .then(registration => console.log('SW registered'))
                     .catch(err => console.log('SW registration failed:', err));
             });
@@ -112,6 +112,6 @@
     <!-- AOS Animation JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <!-- Custom JS -->
-    <script src="<?= $base_url ?>assets/js/main.js"></script>
+    <script src="<?= $base_url ?>assets/js/main.js?v=<?= time() ?>"></script>
 </body>
 </html>

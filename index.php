@@ -306,7 +306,7 @@ require_once 'includes/header.php';
             <h2>Customer Reviews</h2>
         </div>
         
-        <div class="swiper reviews-slider" data-aos="fade-up" data-aos-delay="100">
+        <div class="swiper reviews-slider mt-4">
             <div class="swiper-wrapper">
                 <div class="swiper-slide h-auto">
                     <div class="glass-card p-5 h-100 card-hover-lift" style="border-top: 4px solid var(--golden);">
