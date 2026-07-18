@@ -135,35 +135,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Add to Cart Simulation
+    // Add to Cart Logic
     const addToCartBtns = document.querySelectorAll('.add-to-cart');
     addToCartBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const itemId = this.getAttribute('data-id');
-            const btnOriginalText = this.innerHTML;
+        btn.addEventListener('click', function() {
+            const btn = this;
+            const originalContent = btn.innerHTML;
+            const menuId = btn.getAttribute('data-id');
             
-            // UI feedback
-            this.innerHTML = '<i class="fas fa-check"></i> Added';
-            this.classList.replace('btn-premium', 'btn-success');
+            // Show loading state
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
             
-            // Simulated AJAX Cart Add (update cart badge)
-            const cartBadge = document.querySelector('.fa-shopping-cart').nextElementSibling;
-            if(cartBadge) {
-                let currentCount = parseInt(cartBadge.innerText);
-                cartBadge.innerText = currentCount + 1;
-                
-                // Animation for badge
-                cartBadge.style.transform = 'scale(1.5)';
-                setTimeout(() => {
-                    cartBadge.style.transform = 'scale(1) translate(-50%, -50%)';
-                }, 300);
-            }
+            // Call API
+            const formData = new FormData();
+            formData.append('menu_id', menuId);
             
-            setTimeout(() => {
-                this.innerHTML = btnOriginalText;
-                this.classList.replace('btn-success', 'btn-premium');
-            }, 2000);
+            fetch('php/add_to_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    btn.innerHTML = 'Added <i class="fas fa-check ms-1"></i>';
+                    btn.classList.add('btn-success');
+                    btn.classList.remove('btn-premium');
+                    
+                    // Update cart badge
+                    const cartBadge = document.getElementById('cart-badge');
+                    if(cartBadge) {
+                        cartBadge.innerText = data.cart_count;
+                        cartBadge.style.transform = 'scale(1.5)';
+                        setTimeout(() => {
+                            cartBadge.style.transform = 'scale(1) translate(-50%, -50%)';
+                        }, 200);
+                    }
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalContent;
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-premium');
+                        btn.disabled = false;
+                    }, 2000);
+                } else {
+                    alert(data.message || 'Error adding to cart');
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            });
         });
     });
 });

@@ -8,19 +8,16 @@ if(!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Simulated Cart Items (In a real app, this would be fetched from session or a cart table)
-$cart_items = [
-    ['id' => 1, 'name' => 'Premium Cappuccino', 'price' => 150.00, 'quantity' => 2, 'image' => 'premium_coffee_1783449279091.png'],
-    ['id' => 2, 'name' => 'Gourmet Margherita', 'price' => 299.00, 'quantity' => 1, 'image' => 'premium_pizza_1783449289588.png']
-];
+// Fetch Cart Items from session
+$cart_items = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
 
 $subtotal = 0;
 foreach($cart_items as $item) {
     $subtotal += ($item['price'] * $item['quantity']);
 }
 $gst = $subtotal * 0.05; // 5% GST
-$delivery = 50.00;
-$total = $subtotal + $gst + $delivery;
+$delivery = $subtotal > 0 ? 50.00 : 0.00; // Only charge delivery if there are items
+$total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
 ?>
 
 <section class="section-padding theme-bg-sec" style="padding-top: 150px; min-height: 100vh;">
@@ -34,19 +31,27 @@ $total = $subtotal + $gst + $delivery;
                     <div class="glass-card p-4 mb-4">
                         <h4 class="mb-4 text-golden">Your Items</h4>
                         
-                        <?php foreach($cart_items as $item): ?>
-                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom theme-border">
-                            <img src="<?= $base_url ?>assets/images/<?= $item['image'] ?>" alt="<?= $item['name'] ?>" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
-                            <div class="ms-3 flex-grow-1">
-                                <h5 class="mb-1"><?= $item['name'] ?></h5>
-                                <p class="theme-text-muted mb-0">₹<?= number_format($item['price'], 2) ?> x <?= $item['quantity'] ?></p>
+                        <?php if(empty($cart_items)): ?>
+                            <div class="text-center py-4">
+                                <i class="fas fa-shopping-cart fa-3x text-golden opacity-50 mb-3"></i>
+                                <h5 class="theme-text">Your cart is empty</h5>
+                                <p class="theme-text-muted">Add some delicious items from our menu!</p>
                             </div>
-                            <div class="text-end">
-                                <h5 class="text-golden mb-0">₹<?= number_format($item['price'] * $item['quantity'], 2) ?></h5>
-                                <a href="#" class="text-danger small"><i class="fas fa-trash"></i> Remove</a>
+                        <?php else: ?>
+                            <?php foreach($cart_items as $item): ?>
+                            <div class="d-flex align-items-center mb-3 pb-3 border-bottom theme-border">
+                                <img src="<?= $base_url ?>assets/images/<?= $item['image'] ?>" alt="<?= $item['name'] ?>" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                <div class="ms-3 flex-grow-1">
+                                    <h5 class="mb-1"><?= $item['name'] ?></h5>
+                                    <p class="theme-text-muted mb-0">₹<?= number_format($item['price'], 2) ?> x <?= $item['quantity'] ?></p>
+                                </div>
+                                <div class="text-end">
+                                    <h5 class="text-golden mb-0">₹<?= number_format($item['price'] * $item['quantity'], 2) ?></h5>
+                                    <a href="#" class="text-danger small remove-from-cart" data-id="<?= $item['id'] ?>"><i class="fas fa-trash"></i> Remove</a>
+                                </div>
                             </div>
-                        </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                         
                         <div class="mt-4">
                             <a href="<?= $base_url ?>menu.php" class="btn btn-outline-light btn-sm"><i class="fas fa-arrow-left me-2"></i> Continue Shopping</a>
@@ -126,12 +131,50 @@ $total = $subtotal + $gst + $delivery;
                             </div>
                         </div>
                         
-                        <button type="submit" class="btn btn-premium w-100 py-3 fs-5">Place Order <i class="fas fa-arrow-right ms-2"></i></button>
+                        <button type="submit" class="btn btn-premium w-100 py-3 fs-5" <?= $total > 0 ? '' : 'disabled' ?>>Place Order <i class="fas fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
             </div>
         </form>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const removeBtns = document.querySelectorAll('.remove-from-cart');
+    removeBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const itemId = this.getAttribute('data-id');
+            const row = this.closest('.d-flex');
+            
+            // Show loading
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Removing';
+            
+            const formData = new FormData();
+            formData.append('menu_id', itemId);
+            
+            fetch('php/remove_from_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Error removing item');
+                    this.innerHTML = '<i class="fas fa-trash"></i> Remove';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('An error occurred');
+                this.innerHTML = '<i class="fas fa-trash"></i> Remove';
+            });
+        });
+    });
+});
+</script>
 
 <?php require_once 'includes/footer.php'; ?>

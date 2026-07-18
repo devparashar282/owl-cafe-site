@@ -22,10 +22,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'])) {
         $stmt->execute([$user_id, $name, $phone, $address, $subtotal, $gst, $delivery, $total, $payment_method]);
         $order_id = $pdo->lastInsertId();
         
-        // In a real scenario, loop through actual session cart items and insert into order_items
-        // For simulation, we insert a dummy item
-        $stmt_item = $pdo->prepare("INSERT INTO order_items (order_id, menu_id, quantity, price) VALUES (?, ?, ?, ?)");
-        $stmt_item->execute([$order_id, 1, 2, 150.00]); // Dummy data matching cart simulation
+        // Insert real cart items
+        if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) {
+            $stmt_item = $pdo->prepare("INSERT INTO order_items (order_id, menu_id, quantity, price) VALUES (?, ?, ?, ?)");
+            foreach($_SESSION['cart'] as $item_id => $item) {
+                $stmt_item->execute([$order_id, $item_id, $item['quantity'], $item['price']]);
+            }
+            // Clear cart
+            unset($_SESSION['cart']);
+        } else {
+            throw new Exception("Cart is empty");
+        }
         
         $pdo->commit();
         

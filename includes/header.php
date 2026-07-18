@@ -1,6 +1,18 @@
 <?php
-// Base URL for absolute paths
-$base_url = '/Cafe/';
+// Base URL is initialized in includes/db.php for both local and Vercel hosting.
+if (!isset($base_url)) {
+    $base_url = '/';
+}
+
+$cart_count = 0;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (isset($_SESSION['cart'])) {
+    foreach($_SESSION['cart'] as $item) {
+        $cart_count += $item['quantity'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -98,6 +110,13 @@ $base_url = '/Cafe/';
                     <a href="<?= $base_url ?>booking.php" class="btn-premium d-none d-sm-block" style="padding: 10px 20px;">Book Table</a>
                     <button class="btn btn-outline-light installAppBtn" style="border-radius: 30px; padding: 8px 20px;"><i class="fas fa-mobile-alt me-1"></i> Get App</button>
                     
+                    <a href="<?= $base_url ?>order.php" class="btn-icon position-relative text-decoration-none me-2" title="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-badge" style="font-size: 0.65rem;">
+                            <?= $cart_count ?? 0 ?>
+                        </span>
+                    </a>
+
                     <?php if(isset($_SESSION['user_id'])): ?>
                         <div class="dropdown">
                             <button class="btn-icon dropdown-toggle" type="button" data-bs-toggle="dropdown">
