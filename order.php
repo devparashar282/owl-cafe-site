@@ -89,7 +89,12 @@ $total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
                                 <input type="tel" name="phone" class="form-control bg-transparent theme-border theme-text" required>
                             </div>
                             <div class="col-12" id="deliveryAddressGroup">
-                                <label class="form-label theme-text-muted">Delivery Address</label>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="form-label theme-text-muted mb-0">Delivery Address</label>
+                                    <button type="button" class="btn btn-sm btn-outline-golden" id="btnCurrentLocation">
+                                        <i class="fas fa-map-marker-alt me-1"></i> Use Current Location
+                                    </button>
+                                </div>
                                 <textarea name="address" id="deliveryAddress" class="form-control bg-transparent theme-border theme-text" rows="3" required></textarea>
                             </div>
                             <div class="col-12" id="tableNumberGroup" style="display: none;">
@@ -243,6 +248,56 @@ document.addEventListener('DOMContentLoaded', () => {
     if(typeDelivery && typeDineIn) {
         typeDelivery.addEventListener('change', updateOrderType);
         typeDineIn.addEventListener('change', updateOrderType);
+    }
+    
+    // Geolocation logic
+    const btnCurrentLocation = document.getElementById('btnCurrentLocation');
+    if(btnCurrentLocation) {
+        btnCurrentLocation.addEventListener('click', function() {
+            if (navigator.geolocation) {
+                // Show loading state
+                const originalHtml = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Locating...';
+                this.disabled = true;
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        // Use OpenStreetMap Nominatim for Reverse Geocoding
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if(data && data.display_name) {
+                                    deliveryAddressInput.value = data.display_name;
+                                } else {
+                                    deliveryAddressInput.value = `Lat: ${lat}, Lon: ${lon}`;
+                                    alert("Location found, but could not resolve to a street address.");
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching address:', error);
+                                deliveryAddressInput.value = `Lat: ${lat}, Lon: ${lon}`;
+                            })
+                            .finally(() => {
+                                // Restore button state
+                                this.innerHTML = originalHtml;
+                                this.disabled = false;
+                            });
+                    },
+                    (error) => {
+                        console.error('Geolocation error:', error);
+                        alert("Unable to retrieve your location. Please check your browser permissions.");
+                        this.innerHTML = originalHtml;
+                        this.disabled = false;
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
     }
 });
 </script>
