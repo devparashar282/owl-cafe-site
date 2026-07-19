@@ -60,26 +60,7 @@ require_once 'includes/header.php';
     </div>
 </section>
 
-<?php if($active_movie): ?>
-<!-- Movie Night Banner -->
-<section class="py-5" style="background: linear-gradient(45deg, var(--bg-darker), #1a1a1a); border-bottom: 1px solid var(--golden);">
-    <div class="container">
-        <div class="row align-items-center" data-aos="fade-up">
-            <div class="col-md-8 col-lg-9 text-center text-md-start mb-4 mb-md-0">
-                <span class="badge bg-danger mb-2 px-3 py-1"><i class="fas fa-ticket-alt me-1"></i> Upcoming Movie Night</span>
-                <h2 class="text-golden fw-bold mb-2"><?= htmlspecialchars($active_movie['title']) ?></h2>
-                <p class="text-light mb-0 fs-5">
-                    <i class="far fa-calendar-alt text-golden me-2"></i> <?= date('d M Y', strtotime($active_movie['movie_date'])) ?> &nbsp;|&nbsp; 
-                    <i class="far fa-clock text-golden me-2"></i> <?= date('h:i A', strtotime($active_movie['movie_time'])) ?>
-                </p>
-            </div>
-            <div class="col-md-4 col-lg-3 text-center text-md-end">
-                <a href="movie_night.php" class="btn btn-premium w-100 py-3 rounded-pill fs-5">View Details <i class="fas fa-arrow-right ms-2"></i></a>
-            </div>
-        </div>
-    </div>
-</section>
-<?php endif; ?>
+
 
 <!-- Daily Special Offers Slider -->
 <?php if (!empty($active_offers)): ?>
@@ -94,8 +75,8 @@ require_once 'includes/header.php';
             <div class="swiper-wrapper">
                 <?php foreach ($active_offers as $offer): ?>
                 <div class="swiper-slide">
-                    <div class="glass-card overflow-hidden h-100 card-hover-lift rounded-4" style="border: 2px solid rgba(212, 175, 55, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                        <img src="<?= media_resolve_src($offer['image'], $base_url) ?>" class="img-fluid w-100 object-fit-cover" alt="<?= htmlspecialchars($offer['title']) ?>" style="max-height: 500px; width: 100%;">
+                    <div class="glass-card overflow-hidden h-100 card-hover-lift rounded-4 text-center" style="border: 2px solid rgba(212, 175, 55, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: #0a0a0a;">
+                        <img src="<?= media_resolve_src($offer['image'], $base_url) ?>" class="img-fluid" alt="<?= htmlspecialchars($offer['title']) ?>" style="max-height: 650px; width: auto; object-fit: contain;">
                     </div>
                 </div>
                 <?php endforeach; ?>
