@@ -24,7 +24,7 @@ $total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
     <div class="container">
         <h2 class="text-gradient mb-5">Checkout Summary</h2>
         
-        <form action="php/process_order.php" method="POST">
+        <form id="orderForm">
             <div class="row gy-5">
                 <!-- Cart Items & Details -->
                 <div class="col-lg-7" data-aos="fade-right">
@@ -146,7 +146,7 @@ $total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
                             <div class="form-check custom-radio">
                                 <input class="form-check-input" type="radio" name="payment_method" id="payUpi" value="UPI">
                                 <label class="form-check-label theme-text" for="payUpi">
-                                    <i class="fas fa-qrcode text-info me-2"></i> UPI / QR Code
+                                    <i class="fas fa-qrcode text-info me-2"></i> UPI / QR Code (Razorpay)
                                 </label>
                             </div>
                         </div>
@@ -154,12 +154,12 @@ $total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
                             <div class="form-check custom-radio">
                                 <input class="form-check-input" type="radio" name="payment_method" id="payCard" value="Card">
                                 <label class="form-check-label theme-text" for="payCard">
-                                    <i class="fas fa-credit-card text-warning me-2"></i> Credit / Debit Card
+                                    <i class="fas fa-credit-card text-warning me-2"></i> Credit / Debit Card (Razorpay)
                                 </label>
                             </div>
                         </div>
                         
-                        <button type="submit" class="btn btn-premium w-100 py-3 fs-5" <?= $total > 0 ? '' : 'disabled' ?>>Place Order <i class="fas fa-arrow-right ms-2"></i></button>
+                        <button type="button" id="placeOrderBtn" class="btn btn-premium w-100 py-3 fs-5" <?= $total > 0 ? '' : 'disabled' ?>>Place Order <i class="fas fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
             </div>
@@ -299,7 +299,111 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    if(placeOrderBtn) {
+        placeOrderBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const form = document.getElementById('orderForm');
+            if(!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            if (data.payment_method === 'Cash') {
+                // Submit normally for Cash
+                form.action = 'php/process_order.php';
+                form.method = 'POST';
+                form.submit();
+                return;
+            }
+            
+            // For Razorpay
+            placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            placeOrderBtn.disabled = true;
+            
+            fetch('php/create_razorpay_order.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(rzpData => {
+                if(rzpData.error) {
+                    alert(rzpData.error);
+                    placeOrderBtn.innerHTML = 'Place Order <i class="fas fa-arrow-right ms-2"></i>';
+                    placeOrderBtn.disabled = false;
+                    return;
+                }
+                
+                var options = {
+                    "key": rzpData.key,
+                    "amount": rzpData.amount,
+                    "currency": rzpData.currency,
+                    "name": "Owl Cafe",
+                    "description": "Food Order Payment",
+                    "image": "assets/images/logo.jpg",
+                    "order_id": rzpData.order_id,
+                    "handler": function (response){
+                        // Verify Payment
+                        placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                        
+                        data.razorpay_payment_id = response.razorpay_payment_id;
+                        data.razorpay_order_id = response.razorpay_order_id;
+                        data.razorpay_signature = response.razorpay_signature;
+                        
+                        fetch('php/verify_payment.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        })
+                        .then(res => res.json())
+                        .then(verifyResult => {
+                            if(verifyResult.success) {
+                                window.location.href = 'my_orders.php';
+                            } else {
+                                alert('Payment verification failed: ' + (verifyResult.error || 'Unknown Error'));
+                                placeOrderBtn.innerHTML = 'Place Order <i class="fas fa-arrow-right ms-2"></i>';
+                                placeOrderBtn.disabled = false;
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('An error occurred during verification');
+                            placeOrderBtn.innerHTML = 'Place Order <i class="fas fa-arrow-right ms-2"></i>';
+                            placeOrderBtn.disabled = false;
+                        });
+                    },
+                    "prefill": {
+                        "name": data.name,
+                        "contact": data.phone
+                    },
+                    "theme": {
+                        "color": "#d4af37"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response){
+                    alert(response.error.description);
+                    placeOrderBtn.innerHTML = 'Place Order <i class="fas fa-arrow-right ms-2"></i>';
+                    placeOrderBtn.disabled = false;
+                });
+                rzp1.open();
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Failed to initialize payment gateway.');
+                placeOrderBtn.innerHTML = 'Place Order <i class="fas fa-arrow-right ms-2"></i>';
+                placeOrderBtn.disabled = false;
+            });
+        });
+    }
 });
 </script>
 
 <?php require_once 'includes/footer.php'; ?>
+< s c r i p t   s r c = " h t t p s : / / c h e c k o u t . r a z o r p a y . c o m / v 1 / c h e c k o u t . j s " > < / s c r i p t >  
+ 
