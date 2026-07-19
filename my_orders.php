@@ -143,29 +143,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     items.forEach(item => {
                         itemsHtml += `
                             <tr>
-                                <td class="text-light">${item.name}</td>
-                                <td class="text-center text-light">${item.quantity}</td>
-                                <td class="text-end text-light">₹${parseFloat(item.price).toFixed(2)}</td>
+                                <td class="theme-text">${item.name}</td>
+                                <td class="text-center theme-text">${item.quantity}</td>
+                                <td class="text-end theme-text">₹${parseFloat(item.price).toFixed(2)}</td>
                                 <td class="text-end text-golden">₹${(parseFloat(item.price) * parseInt(item.quantity)).toFixed(2)}</td>
                             </tr>
                         `;
                     });
 
                     modalBody.innerHTML = `
+                        <div class="text-center mb-4 pb-3 border-bottom border-secondary">
+                            <img src="assets/images/logo.jpg" alt="Owl Cafe Logo" width="60" class="rounded-circle mb-2" style="border: 2px solid var(--golden-accent);">
+                            <h4 class="theme-text glow-text font-playfair mb-0">OWL CAFE</h4>
+                            <small class="theme-text-muted">Wise Eats. Great Treats.</small>
+                        </div>
                         <div class="row mb-4">
                             <div class="col-sm-6">
                                 <h6 class="theme-text-muted mb-1">Billed To:</h6>
-                                <p class="text-light fw-bold mb-0">${order.name}</p>
-                                <p class="text-light small mb-0">${order.phone}</p>
-                                <p class="text-light small mb-0">${order.address}</p>
+                                <p class="theme-text fw-bold mb-0">${order.name}</p>
+                                <p class="theme-text small mb-0">${order.phone}</p>
+                                <p class="theme-text small mb-0">${order.address}</p>
                             </div>
                             <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
                                 <h6 class="theme-text-muted mb-1">Invoice Details:</h6>
-                                <p class="text-light mb-0"><strong>Receipt ID:</strong> ${order.formatted_id}</p>
-                                <p class="text-light mb-0"><strong>Date:</strong> ${order.formatted_date}</p>
-                                <p class="text-light mb-0"><strong>Order Type:</strong> ${order.order_type}</p>
-                                <p class="text-light mb-0"><strong>Payment Method:</strong> ${order.payment_method}</p>
-                                <p class="text-light mb-0"><strong>Status:</strong> <span class="text-golden">${order.status}</span></p>
+                                <p class="theme-text mb-0"><strong>Receipt ID:</strong> ${order.formatted_id}</p>
+                                <p class="theme-text mb-0"><strong>Date:</strong> ${order.formatted_date}</p>
+                                <p class="theme-text mb-0"><strong>Order Type:</strong> ${order.order_type}</p>
+                                <p class="theme-text mb-0"><strong>Payment Method:</strong> ${order.payment_method}</p>
+                                <p class="theme-text mb-0"><strong>Status:</strong> <span class="text-golden">${order.status}</span></p>
                             </div>
                         </div>
                         
@@ -189,15 +194,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="col-sm-6 col-md-5">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="theme-text-muted">Subtotal</span>
-                                    <span class="text-light">₹${parseFloat(order.subtotal).toFixed(2)}</span>
+                                    <span class="theme-text">₹${parseFloat(order.subtotal).toFixed(2)}</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="theme-text-muted">GST (5%)</span>
-                                    <span class="text-light">₹${parseFloat(order.gst).toFixed(2)}</span>
+                                    <span class="theme-text">₹${parseFloat(order.gst).toFixed(2)}</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-3 border-bottom border-secondary pb-3">
                                     <span class="theme-text-muted">Delivery</span>
-                                    <span class="text-light">₹${parseFloat(order.delivery_charge).toFixed(2)}</span>
+                                    <span class="theme-text">₹${parseFloat(order.delivery_charge).toFixed(2)}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="text-golden fw-bold fs-5">Total Amount</span>
