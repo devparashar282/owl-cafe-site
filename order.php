@@ -1,12 +1,8 @@
 <?php 
-require_once 'includes/db.php';
+require_once __DIR__ . '/includes/db.php';
 require_once 'includes/header.php'; 
 
-// Require login for ordering
-if(!isset($_SESSION['user_id'])) {
-    echo "<script>alert('Please login to place an order.'); window.location.href='login.php';</script>";
-    exit;
-}
+// Guest checkout enabled - no login required
 
 // Fetch Cart Items from session
 $cart_items = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
@@ -82,7 +78,7 @@ $total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
                         <div class="row gy-3">
                             <div class="col-md-6">
                                 <label class="form-label theme-text-muted">Full Name</label>
-                                <input type="text" name="name" class="form-control bg-transparent theme-border theme-text" value="<?= $_SESSION['user_name'] ?? '' ?>" required>
+                                <input type="text" name="name" class="form-control bg-transparent theme-border theme-text" placeholder="Enter your full name" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label theme-text-muted">Phone Number</label>
@@ -405,5 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <?php require_once 'includes/footer.php'; ?>
-< s c r i p t   s r c = " h t t p s : / / c h e c k o u t . r a z o r p a y . c o m / v 1 / c h e c k o u t . j s " > < / s c r i p t >  
+< s c r i p t   s r c = " h t t p s : / / c h e c k o u t . r a z o r p a y . c o m / v 1 / c h e c k o u t . j s " > < / s c r i p t > 
+ 
  

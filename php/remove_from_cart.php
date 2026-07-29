@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start() handled by db.php
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['menu_id'])) {

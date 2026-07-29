@@ -1,5 +1,6 @@
 <?php 
-require_once 'includes/db.php';
+require_once __DIR__ . '/includes/db.php';
+require_once 'includes/media.php';
 require_once 'includes/header.php'; 
 ?>
 
@@ -25,15 +26,16 @@ require_once 'includes/header.php';
             foreach($gallery_items as $index => $item):
             ?>
             <div class="col-lg-4 col-md-6 mb-4">
-                <div class="glass-card p-2 h-100 position-relative overflow-hidden group gallery-item card-hover-lift" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#lightboxModal" data-img="<?= $base_url ?>assets/images/<?= $item['image'] ?>" data-title="<?= $item['category'] ?>">
+                <?php $gallerySrc = media_resolve_src($item['image'], $base_url); ?>
+                <div class="glass-card p-2 h-100 position-relative overflow-hidden group gallery-item card-hover-lift" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#lightboxModal" data-img="<?= htmlspecialchars($gallerySrc) ?>" data-title="<?= htmlspecialchars($item['category']) ?>">
                     <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-0 group-hover-opacity-50 transition-all z-1 d-flex align-items-center justify-content-center" style="opacity: 0; transition: 0.3s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='0'">
                         <i class="fas fa-search-plus text-golden fs-1"></i>
                     </div>
                     <div class="overflow-hidden rounded w-100 h-100">
-                        <img src="<?= $base_url ?>assets/images/<?= $item['image'] ?>" class="img-fluid w-100 h-100 object-fit-cover hover-zoom" alt="<?= $item['category'] ?>" style="min-height: 250px; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="<?= htmlspecialchars($gallerySrc) ?>" class="img-fluid w-100 h-100 object-fit-cover hover-zoom" alt="<?= htmlspecialchars($item['category']) ?>" style="min-height: 250px; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                     </div>
                     <div class="position-absolute bottom-0 start-0 m-3 z-2">
-                        <span class="badge bg-golden text-black py-1 px-2 fw-bold text-uppercase" style="letter-spacing: 1px;"><?= $item['category'] ?></span>
+                        <span class="badge bg-golden text-black py-1 px-2 fw-bold text-uppercase" style="letter-spacing: 1px;"><?= htmlspecialchars($item['category']) ?></span>
                     </div>
                 </div>
             </div>

@@ -1,9 +1,28 @@
 {
-  "name": "owl-cafe",
   "builds": [
     {
       "src": "api/index.php",
       "use": "vercel-php@0.9.0"
+    },
+    {
+      "src": "assets/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "uploads/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "favicon.ico",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "manifest.json",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "sw.js",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -14,6 +33,18 @@
     {
       "src": "/uploads/(.*)",
       "dest": "/uploads/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "/sw.js"
     },
     {
       "src": "/(.*)",

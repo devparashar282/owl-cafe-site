@@ -1,13 +1,10 @@
 <?php
-session_start();
+// session_start() handled by db.php
 header('Content-Type: application/json');
 
-require_once '../includes/db.php';
+require_once dirname(__DIR__) . '/includes/db.php';
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['error' => 'Not authenticated']);
-    exit;
-}
+// Auth check removed for guest checkout
 
 $input = json_decode(file_get_contents('php://input'), true);
 
@@ -25,7 +22,7 @@ $subtotal = $input['subtotal'] ?? 0;
 $gst = $input['gst'] ?? 0;
 $delivery = $input['delivery'] ?? 0;
 $payment_method = $input['payment_method'] ?? 'Card';
-$user_id = $_SESSION['user_id'];
+$user_id = null;
 $cart = $_SESSION['cart'] ?? [];
 
 $razorpay_key_secret = getenv('RAZORPAY_KEY_SECRET') ?: 'dummy_secret_abc123';

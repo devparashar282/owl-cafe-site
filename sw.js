@@ -1,10 +1,11 @@
 const CACHE_NAME = 'owl-cafe-cache-v1';
+const appBase = new URL('.', self.location.href);
 const urlsToCache = [
-  '/Cafe/index.php',
-  '/Cafe/assets/css/style.css',
-  '/Cafe/assets/css/responsive.css',
-  '/Cafe/assets/js/main.js'
-];
+  'index.php',
+  'assets/css/style.css',
+  'assets/css/responsive.css',
+  'assets/js/main.js'
+].map(path => new URL(path, appBase).href);
 
 self.addEventListener('install', event => {
   event.waitUntil(

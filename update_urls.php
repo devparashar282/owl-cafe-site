@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/db.php';
+require_once __DIR__ . '/includes/db.php';
 
 $stmt = $pdo->query("SELECT id, name FROM menu");
 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);

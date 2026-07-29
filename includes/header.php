@@ -6,7 +6,7 @@ if (!isset($base_url)) {
 
 $cart_count = 0;
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    // session_start() handled by db.php
 }
 if (isset($_SESSION['cart'])) {
     foreach($_SESSION['cart'] as $item) {
@@ -119,22 +119,6 @@ if (isset($_SESSION['cart'])) {
                             <?= $cart_count ?? 0 ?>
                         </span>
                     </a>
-
-                    <?php if(isset($_SESSION['user_id'])): ?>
-                        <div class="dropdown">
-                            <button class="btn-icon dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
-                                <li><a class="dropdown-item" href="<?= $base_url ?>profile.php">Profile</a></li>
-                                <li><a class="dropdown-item" href="<?= $base_url ?>my_orders.php">My Orders</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="<?= $base_url ?>php/auth.php?action=logout">Logout</a></li>
-                            </ul>
-                        </div>
-                    <?php else: ?>
-                        <a href="<?= $base_url ?>login.php" class="btn-icon" title="Login"><i class="fas fa-user"></i></a>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>

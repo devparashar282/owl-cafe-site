@@ -1,11 +1,8 @@
 <?php
-session_start();
+// session_start() handled by db.php
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['error' => 'Not authenticated']);
-    exit;
-}
+// Auth check removed for guest checkout
 
 // Fetch total amount from POST data
 $input = json_decode(file_get_contents('php://input'), true);

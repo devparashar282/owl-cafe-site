@@ -1,6 +1,7 @@
 <?php
 require_once 'includes/header.php';
 require_once 'includes/sidebar.php';
+require_once '../includes/media.php';
 
 $message = '';
 
@@ -9,32 +10,24 @@ function autoGenerateImage($itemName) {
     // Basic SEO friendly keywords from item name
     $keywords = strtolower(str_replace([' ', '(', ')', '/'], [',', '', '', '_'], $itemName));
     $url = "https://loremflickr.com/600/600/" . urlencode($keywords) . "/all?random=" . time();
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    $data = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    
-    if($httpCode == 200 && $data) {
-        $filename = 'menu_auto_' . time() . '_' . rand(1000, 9999) . '.jpg';
-        if (!is_dir('../assets/images/menu')) {
-            mkdir('../assets/images/menu', 0777, true);
-        }
-        file_put_contents('../assets/images/menu/' . $filename, $data);
-        return 'menu/' . $filename;
+    $data = media_fetch_binary($url);
+    if ($data === false) {
+        return false;
     }
-    return false;
+
+    return media_store_binary($data, 'menu_auto_' . time() . '.jpg', 'owl-cafe/menu', 'menu');
 }
 
 // Handle Delete
 if(isset($_GET['delete_id'])) {
     $id = $_GET['delete_id'];
     try {
+        $stmt = $pdo->prepare("SELECT image FROM menu WHERE id = ?");
+        $stmt->execute([$id]);
+        $existingItem = $stmt->fetch();
+        if ($existingItem && isset($existingItem['image'])) {
+            media_delete_stored_asset($existingItem['image']);
+        }
         $pdo->prepare("DELETE FROM menu WHERE id = ?")->execute([$id]);
         $message = "<div class='alert alert-success'>Menu item deleted successfully.</div>";
     } catch(PDOException $e) {
@@ -63,13 +56,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_item'])) {
     } 
     // Manual upload overrides auto-generate if provided
     elseif(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $filename = 'menu_' . time() . '.' . $ext;
-        if (!is_dir('../assets/images/menu')) {
-            mkdir('../assets/images/menu', 0777, true);
+        $storedImage = media_store_uploaded_file($_FILES['image'], 'owl-cafe/menu', 'menu');
+        if ($storedImage) {
+            $image = $storedImage;
+        } else {
+            $message = "<div class='alert alert-danger'>Failed to store uploaded image. Check Cloudinary env vars or local permissions.</div>";
         }
-        move_uploaded_file($_FILES['image']['tmp_name'], '../assets/images/menu/' . $filename);
-        $image = 'menu/' . $filename;
     }
     
     try {
@@ -105,14 +97,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_item'])) {
     } 
     // Manual upload
     elseif(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $filename = 'menu_' . time() . '.' . $ext;
-        if (!is_dir('../assets/images/menu')) {
-            mkdir('../assets/images/menu', 0777, true);
+        $storedImage = media_store_uploaded_file($_FILES['image'], 'owl-cafe/menu', 'menu');
+        if ($storedImage) {
+            $imageUpdateQuery = ", image = ?";
+            $params[] = $storedImage;
+        } else {
+            $message = "<div class='alert alert-danger'>Failed to store uploaded image. Check Cloudinary env vars or local permissions.</div>";
         }
-        move_uploaded_file($_FILES['image']['tmp_name'], '../assets/images/menu/' . $filename);
-        $imageUpdateQuery = ", image = ?";
-        $params[] = 'menu/' . $filename;
     }
     
     $params[] = $id; // For WHERE clause
@@ -160,7 +151,7 @@ $items = $pdo->query("SELECT m.*, c.name as category_name FROM menu m JOIN categ
                     <?php else: foreach($items as $item): ?>
                     <tr>
                         <td>
-                            <img src="../assets/images/<?= htmlspecialchars($item['image']) ?>" alt="" width="50" height="50" class="rounded object-fit-cover shadow-sm">
+                            <img src="<?= htmlspecialchars(media_resolve_src($item['image'], $base_url)) ?>" alt="" width="50" height="50" class="rounded object-fit-cover shadow-sm">
                         </td>
                         <td class="fw-bold">
                             <?= htmlspecialchars($item['name']) ?><br>

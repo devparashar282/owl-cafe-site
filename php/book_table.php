@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/db.php';
+require_once dirname(__DIR__) . '/includes/db.php';
 require '../php/PHPMailer/src/Exception.php';
 require '../php/PHPMailer/src/PHPMailer.php';
 require '../php/PHPMailer/src/SMTP.php';

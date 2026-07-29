@@ -9,6 +9,7 @@ if ($request_uri === '/' || $request_uri === '') {
     require __DIR__ . '/../index.php';
 } elseif ($file && strpos($file, $base_dir) === 0 && file_exists($file) && is_file($file)) {
     if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+        chdir(dirname($file));
         require $file;
     } else {
         // Serve static files if not handled by Vercel routes
@@ -27,8 +28,18 @@ if ($request_uri === '/' || $request_uri === '') {
         }
         readfile($file);
     }
+} elseif ($file && strpos($file, $base_dir) === 0 && is_dir($file)) {
+    if (file_exists($file . '/index.php')) {
+        chdir($file);
+        require $file . '/index.php';
+    } else {
+        http_response_code(403);
+        echo "403 Forbidden - Directory Access Denied";
+    }
 } elseif (file_exists(__DIR__ . '/..' . $request_uri . '.php')) {
-    require __DIR__ . '/..' . $request_uri . '.php';
+    $target = __DIR__ . '/..' . $request_uri . '.php';
+    chdir(dirname($target));
+    require $target;
 } else {
     http_response_code(404);
     echo "404 Not Found";

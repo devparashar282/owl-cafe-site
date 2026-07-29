@@ -1,9 +1,9 @@
 <?php
-session_start();
-require_once '../includes/db.php';
+// session_start() handled by db.php
+require_once dirname(__DIR__) . '/includes/db.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $user_id = null;
     $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
     $phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
     $order_type = $_POST['order_type'] ?? 'Delivery';
@@ -50,7 +50,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'])) {
         $pdo->rollBack();
         echo "<script>alert('Error placing order: " . addslashes($e->getMessage()) . "'); window.history.back();</script>";
     }
-} else {
-    header("Location: ../login.php");
 }
 ?>

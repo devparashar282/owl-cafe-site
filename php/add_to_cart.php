@@ -1,6 +1,6 @@
 <?php
-session_start();
-require_once '../includes/db.php';
+// session_start() handled by db.php
+require_once dirname(__DIR__) . '/includes/db.php';
 
 header('Content-Type: application/json');
 

@@ -1,6 +1,7 @@
 <?php
 require_once 'includes/header.php';
 require_once 'includes/sidebar.php';
+require_once '../includes/media.php';
 
 $message = '';
 
@@ -8,6 +9,12 @@ $message = '';
 if(isset($_GET['delete_id'])) {
     $id = $_GET['delete_id'];
     try {
+        $stmt = $pdo->prepare("SELECT image FROM gallery WHERE id = ?");
+        $stmt->execute([$id]);
+        $existingImage = $stmt->fetch();
+        if ($existingImage && isset($existingImage['image'])) {
+            media_delete_stored_asset($existingImage['image']);
+        }
         $pdo->prepare("DELETE FROM gallery WHERE id = ?")->execute([$id]);
         $message = "<div class='alert alert-success'>Image deleted successfully.</div>";
     } catch(PDOException $e) {
@@ -20,15 +27,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['upload_image'])) {
     $category = $_POST['category'];
     
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $filename = 'gallery_' . time() . '.' . $ext;
-        
-        if(move_uploaded_file($_FILES['image']['tmp_name'], '../assets/images/' . $filename)) {
+        $storedImage = media_store_uploaded_file($_FILES['image'], 'owl-cafe/gallery');
+
+        if($storedImage) {
             $stmt = $pdo->prepare("INSERT INTO gallery (image, category) VALUES (?, ?)");
-            $stmt->execute([$filename, $category]);
+            $stmt->execute([$storedImage, $category]);
             $message = "<div class='alert alert-success'>Image uploaded successfully!</div>";
         } else {
-            $message = "<div class='alert alert-danger'>Failed to move uploaded file.</div>";
+            $message = "<div class='alert alert-danger'>Failed to store uploaded image. Check Cloudinary env vars or local permissions.</div>";
         }
     } else {
         $message = "<div class='alert alert-warning'>Please select a valid image file.</div>";
@@ -78,7 +84,7 @@ $images = $pdo->query("SELECT * FROM gallery ORDER BY id DESC")->fetchAll();
         <?php else: foreach($images as $img): ?>
         <div class="col-md-3 col-sm-6">
             <div class="card bg-transparent border-0 h-100 position-relative group">
-                <img src="../assets/images/<?= htmlspecialchars($img['image']) ?>" class="card-img-top rounded shadow-sm object-fit-cover" height="200" alt="Gallery">
+                <img src="<?= htmlspecialchars(media_resolve_src($img['image'], $base_url)) ?>" class="card-img-top rounded shadow-sm object-fit-cover" height="200" alt="Gallery">
                 <div class="card-body px-0 pt-2 pb-0 d-flex justify-content-between align-items-center">
                     <span class="badge bg-secondary"><?= htmlspecialchars($img['category']) ?></span>
                     <a href="?delete_id=<?= $img['id'] ?>" class="text-danger" onclick="return confirm('Delete this photo?');" title="Delete"><i class="fas fa-trash"></i></a>

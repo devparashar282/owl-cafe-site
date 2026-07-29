@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start() handled by db.php
 
 if(isset($_GET['action']) && $_GET['action'] == 'logout') {
     // Unset all session variables
