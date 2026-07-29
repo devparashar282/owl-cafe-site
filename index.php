@@ -1,6 +1,6 @@
 <?php 
 require_once __DIR__ . '/includes/db.php';
-require_once 'includes/media.php';
+require_once __DIR__ . '/includes/media.php';
 
 // Fetch active movie night
 try {
@@ -18,7 +18,7 @@ try {
     $active_offers = [];
 }
 
-require_once 'includes/header.php'; 
+require_once __DIR__ . '/includes/header.php'; 
 ?>
 
 <!-- Hero Section -->
@@ -421,4 +421,4 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </section>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
