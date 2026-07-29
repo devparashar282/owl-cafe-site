@@ -97,7 +97,11 @@ $site_origin = $appUrl ?: ($site_host !== '' ? $site_scheme . '://' . $site_host
 
 require_once __DIR__ . '/session_handler.php';
 if (session_status() === PHP_SESSION_NONE) {
-    session_set_save_handler(new DatabaseSessionHandler($pdo), true);
-    session_start();
+    try {
+        session_set_save_handler(new DatabaseSessionHandler($pdo), true);
+        @session_start();
+    } catch (\Throwable $e) {
+        @session_start();
+    }
 }
 ?>

@@ -1,11 +1,11 @@
 <?php
-$request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$request_uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
 // Remove the base path if necessary, but on Vercel it's usually just /
 $file = realpath(__DIR__ . '/..' . $request_uri);
 $base_dir = realpath(__DIR__ . '/..');
 
-if ($request_uri === '/' || $request_uri === '') {
+if ($request_uri === '/' || $request_uri === '' || $request_uri === '/index.php' || $request_uri === '/index') {
     require __DIR__ . '/../index.php';
 } elseif ($file && strpos($file, $base_dir) === 0 && file_exists($file) && is_file($file)) {
     if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
