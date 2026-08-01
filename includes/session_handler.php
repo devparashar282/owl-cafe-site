@@ -8,7 +8,7 @@ class DatabaseSessionHandler implements SessionHandlerInterface {
     }
     
     private function ensureTableExists(): void {
-        if ($this->tableCreated) return;
+        if ($this->tableCreated || !$this->pdo) return;
         try {
             $this->pdo->exec("
                 CREATE TABLE IF NOT EXISTS sessions (
@@ -32,6 +32,9 @@ class DatabaseSessionHandler implements SessionHandlerInterface {
     }
     
     public function read(string $id): string|false {
+        if (!$this->pdo) {
+            return '';
+        }
         try {
             $stmt = $this->pdo->prepare("SELECT data FROM sessions WHERE id = ?");
             $stmt->execute([$id]);
@@ -55,30 +58,41 @@ class DatabaseSessionHandler implements SessionHandlerInterface {
     }
     
     public function write(string $id, string $data): bool {
+        if (!$this->pdo) {
+            return true;
+        }
         try {
             $stmt = $this->pdo->prepare("REPLACE INTO sessions (id, data, timestamp) VALUES (?, ?, ?)");
-            return $stmt->execute([$id, $data, time()]);
+            $stmt->execute([$id, $data, time()]);
         } catch (\Throwable $e) {
             $this->ensureTableExists();
             try {
                 $stmt = $this->pdo->prepare("REPLACE INTO sessions (id, data, timestamp) VALUES (?, ?, ?)");
-                return $stmt->execute([$id, $data, time()]);
+                $stmt->execute([$id, $data, time()]);
             } catch (\Throwable $e2) {
-                return false;
+                // Silently ignore to prevent PHP session_write_close fatal error
             }
         }
+        return true;
     }
     
     public function destroy(string $id): bool {
+        if (!$this->pdo) {
+            return true;
+        }
         try {
             $stmt = $this->pdo->prepare("DELETE FROM sessions WHERE id = ?");
-            return $stmt->execute([$id]);
+            $stmt->execute([$id]);
         } catch (\Throwable $e) {
-            return false;
+            // Silently ignore
         }
+        return true;
     }
     
     public function gc(int $max_lifetime): int|false {
+        if (!$this->pdo) {
+            return 0;
+        }
         try {
             $stmt = $this->pdo->prepare("DELETE FROM sessions WHERE timestamp < ?");
             $stmt->execute([time() - $max_lifetime]);

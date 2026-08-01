@@ -153,8 +153,6 @@ if (isset($_SESSION['cart'])) {
                             <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
                                 <li><a class="dropdown-item" href="<?= $base_url ?>login.php"><i class="fas fa-sign-in-alt me-2"></i>Customer Login</a></li>
                                 <li><a class="dropdown-item" href="<?= $base_url ?>signup.php"><i class="fas fa-user-plus me-2"></i>Sign Up</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-golden" href="<?= $base_url ?>admin/login.php"><i class="fas fa-user-shield me-2"></i>Admin Panel</a></li>
                             </ul>
                         </div>
                     <?php endif; ?>
