@@ -96,6 +96,40 @@ $site_scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'htt
 $site_origin = $appUrl ?: ($site_host !== '' ? $site_scheme . '://' . $site_host : '');
 
 require_once __DIR__ . '/session_handler.php';
+
+if (!function_exists('ensureEssentialTables')) {
+    function ensureEssentialTables($pdo) {
+        if (!$pdo) return;
+        try {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(100) NOT NULL,
+                `email` VARCHAR(100) UNIQUE NOT NULL,
+                `phone` VARCHAR(20),
+                `password` VARCHAR(255) NOT NULL,
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `admin` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `username` VARCHAR(50) UNIQUE NOT NULL,
+                `password` VARCHAR(255) NOT NULL,
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+            $stmt = $pdo->query("SELECT COUNT(*) FROM admin");
+            if ($stmt && $stmt->fetchColumn() == 0) {
+                $defaultPass = password_hash('admin123', PASSWORD_DEFAULT);
+                $insertStmt = $pdo->prepare("INSERT INTO admin (username, password) VALUES (?, ?)");
+                $insertStmt->execute(['admin', $defaultPass]);
+            }
+        } catch (\Throwable $e) {
+            // Silently ignore if read-only or error
+        }
+    }
+}
+ensureEssentialTables($pdo);
+
 if (session_status() === PHP_SESSION_NONE) {
     try {
         session_set_save_handler(new DatabaseSessionHandler($pdo), true);

@@ -1,6 +1,6 @@
 <?php
 // session_start() handled by db.php
-require_once dirname(__DIR__) . '/includes/db.php';
+require_once dirname(__DIR__, 2) . '/includes/db.php';
 
 // Admin auth check
 if(!isset($_SESSION['admin_id'])) { 

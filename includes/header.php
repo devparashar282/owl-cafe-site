@@ -119,6 +119,45 @@ if (isset($_SESSION['cart'])) {
                             <?= $cart_count ?? 0 ?>
                         </span>
                     </a>
+
+                    <?php if(isset($_SESSION['admin_id'])): ?>
+                        <div class="dropdown">
+                            <button class="btn-icon dropdown-toggle bg-golden text-dark" type="button" data-bs-toggle="dropdown" title="Admin">
+                                <i class="fas fa-user-shield"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
+                                <li><a class="dropdown-item fw-bold text-golden" href="<?= $base_url ?>admin/index.php"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</a></li>
+                                <li><a class="dropdown-item" href="<?= $base_url ?>profile.php">Profile</a></li>
+                                <li><a class="dropdown-item" href="<?= $base_url ?>my_orders.php">My Orders</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<?= $base_url ?>php/auth.php?action=logout">Logout</a></li>
+                            </ul>
+                        </div>
+                    <?php elseif(isset($_SESSION['user_id'])): ?>
+                        <div class="dropdown">
+                            <button class="btn-icon dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
+                                <li><a class="dropdown-item" href="<?= $base_url ?>profile.php">Profile</a></li>
+                                <li><a class="dropdown-item" href="<?= $base_url ?>my_orders.php">My Orders</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<?= $base_url ?>php/auth.php?action=logout">Logout</a></li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <div class="dropdown">
+                            <button class="btn-icon dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Login / Account">
+                                <i class="fas fa-user"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
+                                <li><a class="dropdown-item" href="<?= $base_url ?>login.php"><i class="fas fa-sign-in-alt me-2"></i>Customer Login</a></li>
+                                <li><a class="dropdown-item" href="<?= $base_url ?>signup.php"><i class="fas fa-user-plus me-2"></i>Sign Up</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-golden" href="<?= $base_url ?>admin/login.php"><i class="fas fa-user-shield me-2"></i>Admin Panel</a></li>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
