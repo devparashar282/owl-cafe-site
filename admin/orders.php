@@ -56,7 +56,7 @@ try {
                         <td class="fw-bold">
                             #ORD-<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?>
                             <div class="mt-1">
-                                <?php if($order['order_type'] == 'Dine In'): ?>
+                                <?php if(($order['order_type'] ?? '') == 'Dine In'): ?>
                                     <span class="badge bg-info text-dark"><i class="fas fa-utensils me-1"></i> Dine In</span>
                                 <?php else: ?>
                                     <span class="badge bg-primary"><i class="fas fa-motorcycle me-1"></i> Delivery</span>
