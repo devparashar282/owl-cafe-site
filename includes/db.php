@@ -32,7 +32,20 @@ if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
 try {
      $pdo = new PDO($dsn, $dbUser, $dbPass, $options);
 } catch (\PDOException $e) {
-     if (getenv('VERCEL') || getenv('VERCEL_URL') || getenv('APP_URL')) {
+     if ($e->getCode() == 1049 || strpos($e->getMessage(), 'Unknown database') !== false) {
+         try {
+             $dsnNoDb = "mysql:host=$dbHost;port=$dbPort;charset=$charset";
+             $pdoTemp = new PDO($dsnNoDb, $dbUser, $dbPass, $options);
+             $pdoTemp->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+             $pdoTemp = null;
+             $pdo = new PDO($dsn, $dbUser, $dbPass, $options);
+         } catch (\PDOException $e2) {
+             $e = $e2;
+         }
+     }
+     
+     if (!isset($pdo)) {
+         if (getenv('VERCEL') || getenv('VERCEL_URL') || getenv('APP_URL')) {
          $isAivenInternal = (strpos($dbHost, '.i.aivencloud.com') !== false || strpos($e->getMessage(), '.i.aivencloud.com') !== false);
          echo '<!DOCTYPE html><html><head><title>Database Setup Required</title>';
          echo '<style>body { font-family: system-ui, -apple-system, sans-serif; background: #1a1a1a; color: #fff; text-align: center; padding: 50px; }';
@@ -72,6 +85,7 @@ try {
          exit;
      } else {
          throw new \PDOException($e->getMessage(), (int)$e->getCode());
+     }
      }
 }
 
