@@ -112,10 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <form action="login.php" method="POST">
                 <div class="mb-3 text-start">
-                    <label for="username" class="form-label text-muted">Admin Username</label>
+                    <label for="username" class="form-label text-muted">Admin ID</label>
                     <div class="input-group">
                         <span class="input-group-text bg-transparent border-end-0 text-muted" style="border-color: rgba(255,255,255,0.1);"><i class="fas fa-user"></i></span>
-                        <input type="text" class="form-control border-start-0" id="username" name="username" placeholder="Owlcafe@gmail" required>
+                        <input type="text" class="form-control border-start-0" id="username" name="username" placeholder="owl@gmail.com" required>
                     </div>
                 </div>
                 <div class="mb-4 text-start">

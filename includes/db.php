@@ -133,9 +133,13 @@ if (!function_exists('ensureEssentialTables')) {
 
             $stmt = $pdo->query("SELECT COUNT(*) FROM admin");
             if ($stmt && $stmt->fetchColumn() == 0) {
-                $defaultPass = password_hash('admin123', PASSWORD_DEFAULT);
+                $defaultPass = password_hash('owl@2025', PASSWORD_DEFAULT);
                 $insertStmt = $pdo->prepare("INSERT INTO admin (username, password) VALUES (?, ?)");
-                $insertStmt->execute(['admin', $defaultPass]);
+                $insertStmt->execute(['owl@gmail.com', $defaultPass]);
+            } else {
+                $defaultPass = password_hash('owl@2025', PASSWORD_DEFAULT);
+                $updateStmt = $pdo->prepare("UPDATE admin SET username = ?, password = ? WHERE username = 'admin'");
+                $updateStmt->execute(['owl@gmail.com', $defaultPass]);
             }
         } catch (\Throwable $e) {
             // Silently ignore if read-only or error
