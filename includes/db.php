@@ -115,6 +115,18 @@ if (!function_exists('ensureEssentialTables')) {
     function ensureEssentialTables($pdo) {
         if (!$pdo) return;
         try {
+            $stmt = $pdo->query("SHOW TABLES LIKE 'categories'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $sqlPath = dirname(__DIR__) . '/godaddy_database_export_utf8.sql';
+                if (file_exists($sqlPath)) {
+                    $sql = file_get_contents($sqlPath);
+                    if (strpos($sql, "\xEF\xBB\xBF") === 0) {
+                        $sql = substr($sql, 3);
+                    }
+                    $pdo->exec($sql);
+                }
+            }
+
             $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `name` VARCHAR(100) NOT NULL,
@@ -128,6 +140,25 @@ if (!function_exists('ensureEssentialTables')) {
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `username` VARCHAR(50) UNIQUE NOT NULL,
                 `password` VARCHAR(255) NOT NULL,
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `offers` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `title` VARCHAR(255) NOT NULL,
+                `image` VARCHAR(255) NOT NULL,
+                `status` ENUM('Active', 'Inactive') DEFAULT 'Active',
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `movie_nights` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `title` VARCHAR(255) NOT NULL,
+                `movie_date` DATE NOT NULL,
+                `movie_time` TIME NOT NULL,
+                `description` TEXT,
+                `image` VARCHAR(255) NOT NULL,
+                `status` ENUM('Active', 'Inactive') DEFAULT 'Active',
                 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
