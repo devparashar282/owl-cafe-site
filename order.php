@@ -77,8 +77,12 @@ $total = $subtotal > 0 ? ($subtotal + $gst + $delivery) : 0;
 
                         <div class="row gy-3">
                             <div class="col-md-6">
-                                <label class="form-label theme-text-muted">Full Name</label>
+                                <label class="form-label theme-text">Full Name *</label>
                                 <input type="text" name="name" class="form-control bg-transparent theme-border theme-text" placeholder="Enter your full name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label theme-text">Email Address *</label>
+                                <input type="email" name="email" class="form-control bg-transparent theme-border theme-text" placeholder="For order invoice" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label theme-text-muted">Phone Number</label>

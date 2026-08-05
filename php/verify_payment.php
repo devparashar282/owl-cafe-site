@@ -3,6 +3,7 @@
 header('Content-Type: application/json');
 
 require_once dirname(__DIR__) . '/includes/db.php';
+require_once dirname(__DIR__) . '/includes/mailer.php';
 
 // Auth check removed for guest checkout
 
@@ -13,6 +14,7 @@ $razorpay_order_id = $input['razorpay_order_id'] ?? '';
 $razorpay_signature = $input['razorpay_signature'] ?? '';
 
 $name = $input['name'] ?? '';
+$email = $input['email'] ?? '';
 $phone = $input['phone'] ?? '';
 $address = $input['address'] ?? '';
 $order_type = $input['order_type'] ?? '';
@@ -35,8 +37,8 @@ if ($generated_signature == $razorpay_signature || $razorpay_key_secret == 'dumm
     try {
         $pdo->beginTransaction();
         
-        $stmt = $pdo->prepare("INSERT INTO orders (user_id, name, phone, address, order_type, table_number, total, subtotal, gst, delivery_charge, payment_method, payment_status, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Paid', 'Pending')");
-        $stmt->execute([$user_id, $name, $phone, $address, $order_type, $table_number, $total, $subtotal, $gst, $delivery, $payment_method]);
+        $stmt = $pdo->prepare("INSERT INTO orders (user_id, name, email, phone, address, order_type, table_number, total, subtotal, gst, delivery_charge, payment_method, payment_status, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Paid', 'Pending')");
+        $stmt->execute([$user_id, $name, $email, $phone, $address, $order_type, $table_number, $total, $subtotal, $gst, $delivery, $payment_method]);
         
         $order_id = $pdo->lastInsertId();
         
@@ -50,6 +52,24 @@ if ($generated_signature == $razorpay_signature || $razorpay_key_secret == 'dumm
         unset($_SESSION['cart']);
         
         $pdo->commit();
+        
+        $order_details = [
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'order_type' => $order_type,
+            'address' => $address,
+            'payment_method' => $payment_method,
+            'subtotal' => $subtotal,
+            'gst' => $gst,
+            'delivery_charge' => $delivery,
+            'total' => $total
+        ];
+        
+        sendAdminOrderNotification($order_id, $order_details);
+        if (!empty($email)) {
+            sendCustomerInvoice($email, $order_id, $order_details);
+        }
         
         echo json_encode(['success' => true, 'order_id' => $order_id]);
     } catch(PDOException $e) {

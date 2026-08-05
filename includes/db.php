@@ -175,6 +175,7 @@ if (!function_exists('ensureEssentialTables')) {
             // Ensure newer columns exist in orders table
             $columns = [
                 "order_type VARCHAR(50) DEFAULT 'Delivery' AFTER user_id",
+                "email VARCHAR(255) NULL AFTER name",
                 "subtotal DECIMAL(10,2) DEFAULT 0.00 AFTER address",
                 "gst DECIMAL(10,2) DEFAULT 0.00 AFTER subtotal",
                 "delivery_charge DECIMAL(10,2) DEFAULT 0.00 AFTER gst"
