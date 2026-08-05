@@ -66,27 +66,27 @@ try {
 ?>
 
 <!-- Content Wrapper -->
-<div class="content-wrapper">
+<main id="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-tags me-2"></i>Manage Daily Offers</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOfferModal">
+        <h2 class="mb-0 theme-text"><i class="fas fa-tags me-2"></i>Manage Daily Offers</h2>
+        <button class="btn btn-premium" data-bs-toggle="modal" data-bs-target="#addOfferModal">
             <i class="fas fa-plus me-1"></i> Add New Offer
         </button>
     </div>
 
     <?= $message ?>
 
-    <div class="card">
+    <div class="admin-card">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0 align-middle">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
-                            <th>Poster Image</th>
-                            <th>Offer Title</th>
-                            <th>Added On</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th class="theme-text">Poster Image</th>
+                            <th class="theme-text">Offer Title</th>
+                            <th class="theme-text">Added On</th>
+                            <th class="theme-text">Status</th>
+                            <th class="theme-text">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,8 +95,8 @@ try {
                             <td>
                                 <img src="<?= media_resolve_src($offer['image'], '../') ?>" alt="<?= htmlspecialchars($offer['title']) ?>" class="rounded" style="width: 100px; height: 100px; object-fit: cover;">
                             </td>
-                            <td class="fw-bold"><?= htmlspecialchars($offer['title']) ?></td>
-                            <td><?= date('d M Y', strtotime($offer['created_at'])) ?></td>
+                            <td class="fw-bold theme-text"><?= htmlspecialchars($offer['title']) ?></td>
+                            <td class="theme-text"><?= date('d M Y', strtotime($offer['created_at'])) ?></td>
                             <td>
                                 <a href="?toggle_status_id=<?= $offer['id'] ?>&status=<?= $offer['status'] ?>" class="badge <?= $offer['status'] == 'Active' ? 'bg-success' : 'bg-secondary' ?> text-decoration-none">
                                     <?= $offer['status'] ?> <i class="fas fa-sync-alt ms-1" style="font-size:10px;"></i>
@@ -112,7 +112,7 @@ try {
                         
                         <?php if(empty($offers)): ?>
                         <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">No offers added yet.</td>
+                            <td colspan="5" class="text-center py-4 theme-text-muted">No offers added yet.</td>
                         </tr>
                         <?php endif; ?>
                     </tbody>
@@ -120,7 +120,7 @@ try {
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <!-- Add Offer Modal -->
 <div class="modal fade" id="addOfferModal" tabindex="-1">
