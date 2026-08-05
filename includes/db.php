@@ -172,6 +172,20 @@ if (!function_exists('ensureEssentialTables')) {
                 $updateStmt = $pdo->prepare("UPDATE admin SET username = ?, password = ? WHERE username = 'admin'");
                 $updateStmt->execute(['owl@gmail.com', $defaultPass]);
             }
+            // Ensure newer columns exist in orders table
+            $columns = [
+                "order_type VARCHAR(50) DEFAULT 'Delivery' AFTER user_id",
+                "subtotal DECIMAL(10,2) DEFAULT 0.00 AFTER address",
+                "gst DECIMAL(10,2) DEFAULT 0.00 AFTER subtotal",
+                "delivery_charge DECIMAL(10,2) DEFAULT 0.00 AFTER gst"
+            ];
+            foreach ($columns as $colDef) {
+                try {
+                    $pdo->exec("ALTER TABLE orders ADD COLUMN $colDef");
+                } catch (\Throwable $e) {
+                    // Column likely already exists
+                }
+            }
         } catch (\Throwable $e) {
             // Silently ignore if read-only or error
         }
