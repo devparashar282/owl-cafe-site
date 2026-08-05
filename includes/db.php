@@ -1,10 +1,10 @@
 <?php
 // session_start moved to bottom
-$dbHost = $_ENV['DB_HOST'] ?? $_SERVER['DB_HOST'] ?? getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: '127.0.0.1';
+$dbHost = $_ENV['DB_HOST'] ?? $_SERVER['DB_HOST'] ?? getenv('DB_HOST') ?: 'owlcafe-db.cqta8egcin7l.us-east-1.rds.amazonaws.com';
 $dbPort = $_ENV['DB_PORT'] ?? $_SERVER['DB_PORT'] ?? getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: '3306';
-$dbName = $_ENV['DB_NAME'] ?? $_SERVER['DB_NAME'] ?? getenv('DB_NAME') ?: getenv('MYSQL_DATABASE') ?: 'owl_cafe';
-$dbUser = $_ENV['DB_USER'] ?? $_SERVER['DB_USER'] ?? getenv('DB_USER') ?: getenv('MYSQLUSER') ?: 'root';
-$dbPass = $_ENV['DB_PASS'] ?? $_SERVER['DB_PASS'] ?? getenv('DB_PASS') ?: getenv('MYSQLPASSWORD') ?: '';
+$dbName = $_ENV['DB_NAME'] ?? $_SERVER['DB_NAME'] ?? getenv('DB_NAME') ?: getenv('MYSQL_DATABASE') ?: 'owlcafe';
+$dbUser = $_ENV['DB_USER'] ?? $_SERVER['DB_USER'] ?? getenv('DB_USER') ?: getenv('MYSQLUSER') ?: 'admin';
+$dbPass = $_ENV['DB_PASS'] ?? $_SERVER['DB_PASS'] ?? getenv('DB_PASS') ?: getenv('MYSQLPASSWORD') ?: 'OwlCafePassword2025!';
 $charset = 'utf8mb4';
 
 $databaseUrl = getenv('DATABASE_URL');
