@@ -25,10 +25,7 @@ $options = [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     PDO::ATTR_EMULATE_PREPARES   => false,
 ];
-// Handle SSL verification safely for PHP 8.5+
-if (class_exists('Pdo\Mysql') && defined('Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')) {
-    $options[\Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT] = false;
-} elseif (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
+if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
     @$options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
 }
 
