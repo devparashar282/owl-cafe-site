@@ -192,7 +192,7 @@ if (!function_exists('ensureEssentialTables')) {
         }
     }
 }
-ensureEssentialTables($pdo);
+// ensureEssentialTables($pdo); // Disabled to prevent Vercel serverless timeout
 
 if (session_status() === PHP_SESSION_NONE) {
     try {
